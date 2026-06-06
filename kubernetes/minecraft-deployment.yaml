@@ -31,9 +31,14 @@ spec:
         - name: EULA
           value: "TRUE"
         - name: MOTD
-          value: "Abram Gallup - Ops 4 Server"
+          value: "Abram Gallup - Ops 5 Server"
         - name: VERSION
           value: "1.20.1" #same as Ops 3 version
+        - name: RCON_PASSWORD 
+          valueFrom:
+            secretKeyRef:
+              name: minecraft-secret
+              key: rcon-password
         - name: MEMORY
           value: "1G"
         
@@ -66,12 +71,24 @@ spec:
       
       - name: mc-monitor
         image: itzg/mc-monitor:latest
-        command: ["/mc-monitor", "export-for-prometheus", "--export-port=2400"]  
+        command: ["/mc-monitor", "export-for-prometheus"]
+        args:
+          - "-servers=127.0.0.1:25565"
+          - "-port=2400"  
         env:
           - name: MINECRAFT_HOST
             value: "127.0.0.1"
           - name: MINECRAFT_PORT
             value: "25565"
+          - name: ENABLE_QUERY
+            value: "true"
+          - name: OVERRIDE_SERVER_PROPERTIES
+            value: "true"
+          - name: RCON_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: minecraft-secret
+                key: rcon-password
         ports:
           - containerPort: 2400
             name: metrics

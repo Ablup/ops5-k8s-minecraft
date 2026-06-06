@@ -16,7 +16,7 @@ spec:
         severity: critical
       annotations:
         summary: "Pod {{ $labels.pod }} is crash looping"
-        runbook: "Check logs: kubectl logs {{ $labels.pod }} --previous"
+        runbook: "https://github.com/Ablup/ops5-k8s-minecraft/blob/main/docs/runbooks/MinecraftPodCrashLooping.md"
 
     - alert: MinecraftPodNotReady
       expr: kube_pod_status_ready{namespace="default", condition="true"} == 0
@@ -25,7 +25,7 @@ spec:
         severity: warning
       annotations:
         summary: "Pod {{ $labels.pod }} is not ready"
-        runbook: "Check events: kubectl describe pod {{ $labels.pod }}"
+        runbook: "https://github.com/Ablup/ops5-k8s-minecraft/blob/main/docs/runbooks/MinecraftPodNotReady.md"
 
     - alert: HighNodeMemory
       expr: 100 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"} * 100) > 85
@@ -35,4 +35,4 @@ spec:
       annotations:
         summary: "Node memory usage is above 85%"
         description: "The node {{ $labels.instance }} has been using over 85% of its memory for more than 2 minutes."
-        runbook: "See runbook document for first response steps"      
+        runbook: "https://github.com/Ablup/ops5-k8s-minecraft/blob/main/docs/runbooks/HighNodeMemory.md"      
