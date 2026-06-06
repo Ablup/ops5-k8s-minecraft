@@ -64,7 +64,20 @@ spec:
         - name: minecraft-data
           mountPath: /data
       
+      - name: mc-monitor
+        image: itzg/mc-monitor:latest
+        command: ["/mc-monitor", "export-for-prometheus", "--export-port=2400"]  
+        env:
+          - name: MINECRAFT_HOST
+            value: "127.0.0.1"
+          - name: MINECRAFT_PORT
+            value: "25565"
+        ports:
+          - containerPort: 2400
+            name: metrics
+      
       volumes:
-      - name: minecraft-data
-        persistentVolumeClaim:
-          claimName: minecraft-pvc
+        - name: minecraft-data
+          persistentVolumeClaim:
+            claimName: minecraft-pvc
+

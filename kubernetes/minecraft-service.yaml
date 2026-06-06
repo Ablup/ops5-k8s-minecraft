@@ -7,6 +7,10 @@ spec:
   selector:
     app: minecraft # This MUST match the label in your deployment
   ports:
-    - protocol: TCP
+    - name: minecraft 
+      protocol: TCP
       port: 25565
       targetPort: 25565
+    - name: metrics
+      port: 2400
+      targetPort: 2400    

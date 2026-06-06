@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: minecraft-alerts
+  namespace: monitoring
+  labels:
+    release: monitoring  # This label is critical for discovery!
+spec:
+  groups:
+  - name: minecraft.rules
+    rules:
+    - alert: MinecraftPodCrashLooping
+      expr: increase(kube_pod_container_status_restarts_total{namespace="default", pod=~"minecraft-.*"}[5m]) > 3
+      for: 1m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Pod {{ $labels.pod }} is crash looping"
+        runbook: "Check logs: kubectl logs {{ $labels.pod }} --previous"
+
+    - alert: MinecraftPodNotReady
+      expr: kube_pod_status_ready{namespace="default", condition="true"} == 0
+      for: 1m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Pod {{ $labels.pod }} is not ready"
+        runbook: "Check events: kubectl describe pod {{ $labels.pod }}"
+
+    - alert: HighNodeMemory
+      expr: 100 - (node_memory_MemAvailable_bytes{job="node-exporter"} / node_memory_MemTotal_bytes{job="node-exporter"} * 100) > 85
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Node memory usage is above 85%"
+        description: "The node {{ $labels.instance }} has been using over 85% of its memory for more than 2 minutes."
+        runbook: "See runbook document for first response steps"      

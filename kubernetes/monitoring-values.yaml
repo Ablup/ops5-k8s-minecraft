@@ -1,0 +1,16 @@
+# monitoring-values.yaml
+# Declarative configuration for kube-prometheus-stack
+
+grafana:
+  service:
+    type: NodePort
+    nodePort: 31000
+  sidecar:
+    image:
+      tag: 1.28.0
+
+prometheus:
+  prometheusSpec:
+    # Allows Prometheus to find ServiceMonitors and Rules in any namespace
+    serviceMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
